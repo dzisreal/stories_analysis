@@ -1,0 +1,124 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fa865135",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#https://medium.com/@aman.parmar17/handling-real-time-kafka-data-streams-using-pyspark-8b6616a3a084"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "89e094a9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyspark.sql import SparkSession\n",
+    "from pyspark.sql.functions import *\n",
+    "from pyspark.sql.types import *"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "420944bc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create Sparksession and Sparkcontext\n",
+    "spark = (SparkSession\n",
+    "         .builder\n",
+    "         .master('local')\n",
+    "         .appName('CryptoConsumer')\n",
+    "         .getOrCreate())\n",
+    "sc = spark.sparkContext.setLogLevel(\"WARN\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fccc38f1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "schema = schema = StructType([ \n",
+    "        StructField(\"symbol\", StringType(), True),\n",
+    "        StructField(\"price\" , StringType(), True),\n",
+    "        StructField(\"time\" , StringType(), True),\n",
+    "        StructField(\"volume\" , StringType(), True),\n",
+    "        ])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "66845ae6",
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AnalysisException",
+     "evalue": " Failed to find data source: kafka. Please deploy the application as per the deployment section of \"Structured Streaming + Kafka Integration Guide\".        ",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mAnalysisException\u001b[0m                         Traceback (most recent call last)",
+      "Cell \u001b[0;32mIn[6], line 7\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[38;5;66;03m# Create stream dataframe setting kafka server, topic and offset option\u001b[39;00m\n\u001b[1;32m      2\u001b[0m sampleDataframe \u001b[38;5;241m=\u001b[39m (\n\u001b[1;32m      3\u001b[0m         \u001b[43mspark\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mreadStream\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mformat\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mkafka\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[1;32m      4\u001b[0m \u001b[43m        \u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moption\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mkafka.bootstrap.servers\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mlocalhost:9092\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[1;32m      5\u001b[0m \u001b[43m        \u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moption\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43msubscribe\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mtopic_test\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[1;32m      6\u001b[0m \u001b[43m        \u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moption\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mstartingOffsets\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mlatest\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[0;32m----> 7\u001b[0m \u001b[43m        \u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mload\u001b[49m\u001b[43m(\u001b[49m\u001b[43m)\u001b[49m\n\u001b[1;32m      8\u001b[0m     )\n",
+      "File \u001b[0;32m~/.local/lib/python3.10/site-packages/pyspark/sql/streaming.py:469\u001b[0m, in \u001b[0;36mDataStreamReader.load\u001b[0;34m(self, path, format, schema, **options)\u001b[0m\n\u001b[1;32m    467\u001b[0m     \u001b[38;5;28;01mreturn\u001b[39;00m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_df(\u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_jreader\u001b[38;5;241m.\u001b[39mload(path))\n\u001b[1;32m    468\u001b[0m \u001b[38;5;28;01melse\u001b[39;00m:\n\u001b[0;32m--> 469\u001b[0m     \u001b[38;5;28;01mreturn\u001b[39;00m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_df(\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_jreader\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mload\u001b[49m\u001b[43m(\u001b[49m\u001b[43m)\u001b[49m)\n",
+      "File \u001b[0;32m~/.local/lib/python3.10/site-packages/py4j/java_gateway.py:1321\u001b[0m, in \u001b[0;36mJavaMember.__call__\u001b[0;34m(self, *args)\u001b[0m\n\u001b[1;32m   1315\u001b[0m command \u001b[38;5;241m=\u001b[39m proto\u001b[38;5;241m.\u001b[39mCALL_COMMAND_NAME \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1316\u001b[0m     \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mcommand_header \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1317\u001b[0m     args_command \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1318\u001b[0m     proto\u001b[38;5;241m.\u001b[39mEND_COMMAND_PART\n\u001b[1;32m   1320\u001b[0m answer \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mgateway_client\u001b[38;5;241m.\u001b[39msend_command(command)\n\u001b[0;32m-> 1321\u001b[0m return_value \u001b[38;5;241m=\u001b[39m \u001b[43mget_return_value\u001b[49m\u001b[43m(\u001b[49m\n\u001b[1;32m   1322\u001b[0m \u001b[43m    \u001b[49m\u001b[43manswer\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mgateway_client\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mtarget_id\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mname\u001b[49m\u001b[43m)\u001b[49m\n\u001b[1;32m   1324\u001b[0m \u001b[38;5;28;01mfor\u001b[39;00m temp_arg \u001b[38;5;129;01min\u001b[39;00m temp_args:\n\u001b[1;32m   1325\u001b[0m     temp_arg\u001b[38;5;241m.\u001b[39m_detach()\n",
+      "File \u001b[0;32m~/.local/lib/python3.10/site-packages/pyspark/sql/utils.py:196\u001b[0m, in \u001b[0;36mcapture_sql_exception.<locals>.deco\u001b[0;34m(*a, **kw)\u001b[0m\n\u001b[1;32m    192\u001b[0m converted \u001b[38;5;241m=\u001b[39m convert_exception(e\u001b[38;5;241m.\u001b[39mjava_exception)\n\u001b[1;32m    193\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28misinstance\u001b[39m(converted, UnknownException):\n\u001b[1;32m    194\u001b[0m     \u001b[38;5;66;03m# Hide where the exception came from that shows a non-Pythonic\u001b[39;00m\n\u001b[1;32m    195\u001b[0m     \u001b[38;5;66;03m# JVM exception message.\u001b[39;00m\n\u001b[0;32m--> 196\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m converted \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;28mNone\u001b[39m\n\u001b[1;32m    197\u001b[0m \u001b[38;5;28;01melse\u001b[39;00m:\n\u001b[1;32m    198\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m\n",
+      "\u001b[0;31mAnalysisException\u001b[0m:  Failed to find data source: kafka. Please deploy the application as per the deployment section of \"Structured Streaming + Kafka Integration Guide\".        "
+     ]
+    }
+   ],
+   "source": [
+    "# Create stream dataframe setting kafka server, topic and offset option\n",
+    "sampleDataframe = (\n",
+    "        spark.readStream.format(\"kafka\")\n",
+    "        .option(\"kafka.bootstrap.servers\", \"localhost:9092\")\n",
+    "        .option(\"subscribe\", \"topic_test\")\n",
+    "        .option(\"startingOffsets\", \"latest\")\n",
+    "        .load()\n",
+    "        .select(from_json(col(\"value\").cast(\"string\"), schema).alias(\"parsed_value\"))\n",
+    "        .select(col(\"parsed_value.*\"))\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e1ef6f62",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = sampleDataframe.select('*')\n",
+    "\n",
+    "df.write.save('/user/hadoop', format='parquet', mode='append')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.16"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

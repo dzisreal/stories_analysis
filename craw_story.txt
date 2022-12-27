@@ -1,0 +1,14 @@
+get list the loai truyen o trang chu
+
+class truyen:
+	self.name
+	self.type
+	self.author
+	self.total_chapter
+	
+class chapter:
+	self.name
+	self.chapter_number
+	self.content
+	self.length
+	self.time_to_read (length/200)
